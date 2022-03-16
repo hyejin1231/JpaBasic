@@ -14,16 +14,18 @@ public class helloJpa {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
+            // 비영속 상태
             Member member = new Member();
             member.setId(1L);
             member.setName("userA");
 
+            // 영속 상태 (영속성 컨텍스트를 통해 객체 관리됨)
             em.persist(member);
 
-            List<Member> result = em.createQuery("select m from Member as m", Member.class).getResultList();
-            for (Member member1 : result) {
-                System.out.println("member name = " + member1.getName());
-            }
+           // 조회 -> 1차 캐시로 인해 select 쿼리문 나가지 않는다.
+            Member findMember = em.find(Member.class, 1L);
+            System.out.println("findMember.getId() = " + findMember.getId());
+            System.out.println("findMember.getName() = " + findMember.getName());
 
             tx.commit();
         } catch (Exception e) {
